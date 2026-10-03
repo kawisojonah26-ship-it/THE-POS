@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SUUK POS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="login-overlay" class="login-overlay">
+      <div class="login-box">
+        <div class="brand-block login-brand">
+          <img class="brand-icon" src="assets/suuk-logo.svg" alt="SUUK logo" />
+          <div>
+            <h1>SUUK POS</h1>
+            <p>Secure access</p>
+          </div>
+        </div>
+        <form id="login-form" class="login-form">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="login-username" value="admin" required />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="login-password" value="admin123" required />
+          </div>
+          <button class="primary wide" type="submit">Login to POS</button>
+        </form>
+        <p class="login-hint">Demo accounts: admin / admin123 · sales / sales123 · purchase / purchase123 · delivery / delivery123</p>
+      </div>
+    </div>
+
+    <div class="app-shell" id="app-shell">
+      <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+      <aside class="sidebar">
+        <div class="brand-block">
+          <img class="brand-icon" src="assets/suuk-logo.svg" alt="SUUK logo" />
+          <div>
+            <h1>SUUK POS</h1>
+            <p>Retail & Wholesale</p>
+          </div>
+        </div>
+
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-item active" data-section="dashboard">
+            <span>📈</span>
+            Dashboard
+          </button>
+          <button class="nav-item" data-section="sales">
+            <span>🛒</span>
+            Sales
+          </button>
+          <button class="nav-item" data-section="quotations">
+            <span>📄</span>
+            Quotations
+          </button>
+          <button class="nav-item" data-section="purchases">
+            <span>📦</span>
+            Purchases
+          </button>
+          <button class="nav-item" data-section="vendor-invoices">
+            <span>🧾</span>
+            Vendor Invoices
+          </button>
+          <button class="nav-item multi-branch-only" data-section="branches" hidden>
+            <span>🏬</span>
+            Branches
+          </button>
+          <button class="nav-item" data-section="customers">
+            <span>👥</span>
+            Customers
+          </button>
+          <button class="nav-item" data-section="vendors">
+            <span>🏢</span>
+            Vendors
+          </button>
+          <button class="nav-item" data-section="inventory">
+            <span>📊</span>
+            Inventory
+          </button>
+          <button class="nav-item" data-section="accounts">
+            <span>💰</span>
+            Accounts
+          </button>
+          <button class="nav-item" data-section="delivery">
+            <span>🚚</span>
+            Delivery
+          </button>
+          <button class="nav-item" data-section="history">
+            <span>🗓️</span>
+            Transaction History
+          </button>
+        </nav>
+      </aside>
+
+      <main class="content-panel">
+        <header class="topbar">
+          <div class="topbar-heading">
+            <div class="mobile-topbar-row">
+              <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+              <div class="mobile-brand">
+                <img src="assets/suuk-logo.svg" alt="SUUK logo" />
+                <strong>SUUK POS</strong>
+              </div>
+            </div>
+            <div class="topbar-title">
+              <p class="eyebrow">Operations Center</p>
+              <h2 id="page-title">Dashboard</h2>
+            </div>
+          </div>
+          <div class="topbar-meta">
+            <div class="branch-selector-wrap multi-branch-only" id="branch-selector-wrap" hidden>
+              <label for="current-branch">Current Branch</label>
+              <select id="current-branch"></select>
+            </div>
+            <button class="secondary small" id="theme-toggle" type="button" aria-pressed="false">☾ Dark mode</button>
+            <button class="pill stock-pill" id="stock-pill" type="button" aria-label="Open inventory"><span class="status-dot"></span>Live stock: <strong id="live-stock-badge">0</strong></button>
+            <button class="pill low-stock-pill" id="low-stock-pill" type="button" aria-label="Open low stock inventory"><span class="status-dot"></span>Low stock: <strong id="low-stock-badge">0</strong></button>
+            <button class="secondary small-logout" id="logout-button" type="button">Logout</button>
+          </div>
+        </header>
+
+        <section id="dashboard" class="module-section active">
+          <div class="stats-grid three-col">
+            <div class="stat-card good dashboard-role-card dashboard-sales-card" id="dashboard-today-sales-card" data-dashboard-section="sales" role="button" tabindex="0" aria-label="Open sales" hidden>
+              <span class="label">Today's Total Sales</span>
+              <strong id="dashboard-today-sales">UGX 0</strong>
+            </div>
+            <div class="stat-card danger dashboard-role-card dashboard-purchase-card" id="dashboard-today-purchases-card" data-dashboard-section="purchases" role="button" tabindex="0" aria-label="Open purchases" hidden>
+              <span class="label">Today's Total Purchases</span>
+              <strong id="dashboard-today-purchases">UGX 0</strong>
+            </div>
+            <div class="stat-card good dashboard-admin-card" data-dashboard-section="sales" role="button" tabindex="0" aria-label="Open sales">
+              <span class="label">Total Revenue</span>
+              <strong id="dashboard-total-revenue">UGX 0</strong>
+            </div>
+            <div class="stat-card danger dashboard-admin-card" data-dashboard-section="accounts" role="button" tabindex="0" aria-label="Open accounts">
+              <span class="label">Total Expenses</span>
+              <strong id="dashboard-total-expenses">UGX 0</strong>
+            </div>
+            <div class="stat-card accent dashboard-admin-card">
+              <span class="label">Net Profit</span>
+              <strong id="dashboard-net-profit">UGX 0</strong>
+            </div>
+          </div>
+
+          <div class="card-grid single-col dashboard-admin-card">
+            <div class="panel-card live-transactions-panel" data-dashboard-section="history" role="button" tabindex="0" aria-label="Open transaction history">
+              <div class="panel-head">
+                <div>
+                  <h3>Today's Live Transactions</h3>
+                  <p class="section-note" id="live-transactions-date"></p>
+                </div>
+                <span class="muted">Count only</span>
+              </div>
+              <div id="live-transactions" class="live-transactions-grid"></div>
+            </div>
+          </div>
+
+          <div class="card-grid two-col">
+            <div class="dashboard-chart-column dashboard-admin-card">
+              <div class="panel-card">
+                <div class="panel-head">
+                  <div>
+                    <h3>Sales Overview</h3>
+                    <p class="section-note" id="dashboard-chart-caption">Monthly sales overview</p>
+                  </div>
+                  <strong class="chart-total" id="dashboard-chart-total">UGX 0</strong>
+                </div>
+                <div id="dashboard-chart" class="sales-chart"></div>
+              </div>
+              <div class="panel-card dashboard-insights-card">
+                <div class="panel-head">
+                  <div>
+                    <h3>Top Selling Products</h3>
+                    <p class="section-note">Best performers by units sold</p>
+                  </div>
+                  <span class="muted">All time</span>
+                </div>
+                <div id="dashboard-top-products" class="dashboard-top-products"></div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Business Snapshot</h3>
+              </div>
+              <div id="dashboard-summary" class="dashboard-summary"></div>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3 id="dashboard-recent-title">Recent Sales</h3>
+                <span class="list-total" id="dashboard-recent-total">UGX 0</span>
+              </div>
+              <div id="dashboard-recent-sales" class="list-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sales" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>New Sale</h3>
+                <span class="muted" id="sale-status-tag">Draft</span>
+              </div>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label>Customer</label>
+                  <select id="sales-customer" aria-label="Sales customer"></select>
+                </div>
+                <div class="field">
+                  <label>Cashier</label>
+                  <select id="sales-cashier"></select>
+                </div>
+                <div class="field">
+                  <label>Payment Method</label>
+                  <select id="sales-payment-method">
+                    <option value="Cash">Cash</option>
+                    <option value="Mobile Money">Mobile Money</option>
+                    <!-- <option value="Card">Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option> -->
+                    <option value="Credit">Credit</option>
+                  </select>
+                </div>
+                <div class="field payment-detail-field" id="mobile-money-details" hidden>
+                  <label>Mobile Money Receiving Account</label>
+                  <select id="mobile-money-account"></select>
+                  <input type="text" id="mobile-money-payer-name" placeholder="Customer / payer name (optional)" />
+                  <input type="tel" id="mobile-money-payer-phone" placeholder="Customer / payer phone (optional)" />
+                  <input type="text" id="mobile-money-reference" placeholder="Transaction reference (optional)" />
+                  <textarea id="mobile-money-notes" rows="2" placeholder="Notes (optional)"></textarea>
+                </div>
+                <div class="field payment-detail-field" id="credit-payment-details" hidden>
+                  <label>Credit Customer Name</label>
+                  <input type="text" id="credit-customer-name" placeholder="Customer full name" />
+                  <input type="tel" id="credit-customer-phone" placeholder="Phone number" />
+                  <input type="number" id="credit-limit" min="0" placeholder="Credit limit (UGX)" />
+                  <input type="date" id="credit-due-date" aria-label="Credit due date" />
+                  <textarea id="credit-notes" rows="2" placeholder="Credit notes or agreement"></textarea>
+                </div>
+                <div class="field payment-detail-field" id="other-payment-details" hidden>
+                  <label id="other-payment-label">Payment Reference</label>
+                  <input type="text" id="other-payment-reference" placeholder="Reference or receipt number (optional)" />
+                </div>
+                <div class="field">
+                  <label>Product</label>
+                  <input type="search" id="sales-product-search" list="sales-product-options" placeholder="Search product by name, SKU, or barcode" autocomplete="off" />
+                  <datalist id="sales-product-options"></datalist>
+                  <select id="sales-product"></select>
+                </div>
+                <div class="field barcode-field">
+                  <label for="sales-barcode">Barcode scanner</label>
+                  <input type="text" id="sales-barcode" placeholder="Scan barcode / SKU and press Enter" autocomplete="off" />
+                  <button class="secondary small" id="sales-scan-focus" type="button">Scan Barcode</button>
+                </div>
+                <div class="field small">
+                  <label>Quantity</label>
+                  <input type="number" id="sales-qty" min="1" value="1" />
+                </div>
+                <div class="field">
+                  <label>Discount (UGX)</label>
+                  <input type="number" id="sales-discount" min="0" value="0" />
+                </div>
+                <div class="field delivery-request-field">
+                  <label class="checkbox-label"><input type="checkbox" id="sales-requires-delivery" /> Requires delivery</label>
+                </div>
+                <div class="field delivery-request-field" id="sales-delivery-details" hidden>
+                  <label>Delivery Customer Name</label>
+                  <input type="text" id="sales-delivery-customer-name" placeholder="Type customer name" />
+                </div>
+                <div class="field delivery-request-field" id="sales-delivery-email-field" hidden>
+                  <label>Customer Email</label>
+                  <input type="email" id="sales-delivery-customer-email" placeholder="customer@example.com" />
+                </div>
+                <div class="field delivery-request-field" id="sales-delivery-address-field" hidden>
+                  <label>Delivery Address</label>
+                  <input type="text" id="sales-delivery-address" placeholder="Kampala, Nakawa" />
+                </div>
+                <div class="field small delivery-request-field" id="sales-delivery-fee-field" hidden>
+                  <label>Delivery Fee (UGX)</label>
+                  <input type="number" id="sales-delivery-fee" min="0" value="0" />
+                </div>
+              </div>
+
+              <div class="action-row">
+                <button class="primary" id="add-sale-item" type="button">Add Item</button>
+                <button class="secondary" id="clear-sales-draft" type="button">Clear</button>
+              </div>
+            </div>
+
+            <div class="panel-card summary-card">
+              <div class="panel-head">
+                <h3>Receipt Summary</h3>
+              </div>
+              <div id="sales-cart" class="cart-table"></div>
+              <div class="totals-box">
+                <div class="total-row"><span>Subtotal</span><strong id="sales-subtotal">UGX 0</strong></div>
+                <div class="total-row"><span>Discount</span><strong id="sales-discount-total">UGX 0</strong></div>
+                <div class="total-row grand"><span>Total</span><strong id="sales-grand-total">UGX 0</strong></div>
+              </div>
+              <div class="action-stack">
+                <button class="primary wide" id="complete-sale" type="button">Complete Sale</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card" id="customer-editor-panel">
+              <div class="panel-head">
+                <h3>Receipt Preview</h3>
+                <div class="receipt-print-controls">
+                  <select id="receipt-paper-size" aria-label="Receipt paper size">
+                    <option value="thermal">Thermal 80mm</option>
+                    <option value="a4">A4</option>
+                  </select>
+                  <button class="secondary" id="print-receipt" type="button">Print Receipt</button>
+                </div>
+              </div>
+              <pre id="receipt-preview" class="receipt-box">No sale completed yet.</pre>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Sales History</h3>
+                <span class="list-total" id="sales-history-total">UGX 0</span>
+                <input class="inline-search" id="sales-history-search" type="search" placeholder="Search receipt, customer, or method" />
+              </div>
+              <div id="sales-history" class="list-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="quotations" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head"><h3>Create Quotation</h3><span class="muted">No stock impact</span></div>
+              <form id="quotation-form">
+                <div class="form-grid">
+                  <div class="field"><label for="quotation-customer">Customer</label><select id="quotation-customer" required></select></div>
+                  <div class="field small"><label for="quotation-date">Quotation Date</label><input type="date" id="quotation-date" required /></div>
+                  <div class="field small"><label for="quotation-expiry">Valid Until</label><input type="date" id="quotation-expiry" required /></div>
+                  <div class="field"><label for="quotation-product">Product / Service</label><select id="quotation-product"></select></div>
+                  <div class="field small"><label for="quotation-qty">Quantity</label><input type="number" id="quotation-qty" min="1" value="1" /></div>
+                  <div class="field small"><label for="quotation-price">Unit Price (UGX)</label><input type="number" id="quotation-price" min="0" value="0" /></div>
+                  <div class="field small"><label for="quotation-discount">Discount (UGX)</label><input type="number" id="quotation-discount" min="0" value="0" /></div>
+                  <div class="field small"><label for="quotation-tax">Tax / VAT (%)</label><input type="number" id="quotation-tax" min="0" value="0" /></div>
+                  <div class="field"><label for="quotation-notes">Notes / Terms</label><textarea id="quotation-notes" rows="2"></textarea></div>
+                </div>
+                <div class="action-row"><button class="secondary" type="button" id="add-quotation-item">Add Item</button><button class="primary" type="submit">Save Draft</button><button class="secondary" type="button" id="clear-quotation">Clear</button></div>
+              </form>
+            </div>
+            <div class="panel-card summary-card"><div class="panel-head"><h3>Quotation Summary</h3></div><div id="quotation-cart" class="cart-table"></div><div class="totals-box"><div class="total-row"><span>Subtotal</span><strong id="quotation-subtotal">UGX 0</strong></div><div class="total-row"><span>Discount</span><strong id="quotation-discount-total">UGX 0</strong></div><div class="total-row"><span>Tax</span><strong id="quotation-tax-total">UGX 0</strong></div><div class="total-row grand"><span>Total</span><strong id="quotation-total">UGX 0</strong></div></div></div>
+          </div>
+          <div class="card-grid single-col"><div class="panel-card"><div class="panel-head"><div><h3>View Quotations</h3><p class="section-note" id="quotation-count"></p></div><span class="list-total" id="quotation-list-total">UGX 0</span><input class="inline-search" id="quotation-search" type="search" placeholder="Search quotation or customer" /></div><div id="quotation-list" class="list-table"></div></div></div>
+        </section>
+
+        <section id="purchases" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>New Purchase</h3>
+              </div>
+
+              <div class="form-grid">
+                <div class="field">
+                  <label>Vendor</label>
+                  <select id="purchase-vendor"></select>
+                </div>
+                <div class="field">
+                  <label>Product</label>
+                  <input type="search" id="purchase-product-search" list="purchase-product-options" placeholder="Search product by name, SKU, or barcode" autocomplete="off" />
+                  <datalist id="purchase-product-options"></datalist>
+                  <select id="purchase-product"></select>
+                </div>
+                <div class="field barcode-field">
+                  <label for="purchase-barcode">Barcode scanner</label>
+                  <input type="text" id="purchase-barcode" placeholder="Scan barcode / SKU and press Enter" autocomplete="off" />
+                  <button class="secondary small" id="purchase-scan-focus" type="button">Scan Barcode</button>
+                </div>
+                <div class="field small">
+                  <label>Qty</label>
+                  <input type="number" id="purchase-qty" min="1" value="1" />
+                </div>
+                <div class="field small">
+                  <label>Buying Price</label>
+                  <input type="number" id="purchase-price" min="0" value="0" />
+                </div>
+                <div class="field small">
+                  <label>Selling Price</label>
+                  <input type="number" id="purchase-selling-price" min="0" value="0" />
+                </div>
+                <div class="field">
+                  <label>Expiry Date (optional)</label>
+                  <input type="date" id="purchase-expiry-date" />
+                </div>
+              </div>
+
+              <div class="action-row">
+                <button class="primary" id="add-purchase-item" type="button">Add Purchase Item</button>
+              </div>
+            </div>
+
+            <div class="panel-card summary-card">
+              <div class="panel-head">
+                <h3>Purchase Summary</h3>
+              </div>
+              <div id="purchase-cart" class="cart-table"></div>
+              <div class="totals-box">
+                <div class="total-row grand"><span>Total Purchase</span><strong id="purchase-grand-total">UGX 0</strong></div>
+              </div>
+              <div class="action-stack">
+                <button class="primary wide" id="complete-purchase" type="button">Record Purchase</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Purchase History</h3>
+                <span class="list-total" id="purchase-history-total">UGX 0</span>
+                <input class="inline-search" id="purchase-history-search" type="search" placeholder="Search vendor or purchase" />
+              </div>
+              <div id="purchase-history" class="list-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="vendor-invoices" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head"><h3>Create Vendor Invoice</h3><span class="muted">Stock added once when received</span></div>
+              <form id="vendor-invoice-form">
+                <div class="form-grid">
+                  <div class="field"><label for="invoice-vendor">Vendor</label><select id="invoice-vendor" required></select></div>
+                  <div class="field"><label for="invoice-reference">Vendor Invoice / Reference</label><input type="text" id="invoice-reference" required /></div>
+                  <div class="field small"><label for="invoice-date">Invoice Date</label><input type="date" id="invoice-date" required /></div>
+                  <div class="field small"><label for="invoice-due-date">Due Date</label><input type="date" id="invoice-due-date" required /></div>
+                  <div class="field"><label for="invoice-product">Product / Service</label><select id="invoice-product"></select></div>
+                  <div class="field small"><label for="invoice-qty">Quantity</label><input type="number" id="invoice-qty" min="1" value="1" /></div>
+                  <div class="field small"><label for="invoice-cost">Unit Cost (UGX)</label><input type="number" id="invoice-cost" min="0" value="0" /></div>
+                  <div class="field small"><label for="invoice-discount">Discount (UGX)</label><input type="number" id="invoice-discount" min="0" value="0" /></div>
+                  <div class="field small"><label for="invoice-tax">Tax / VAT (%)</label><input type="number" id="invoice-tax" min="0" value="0" /></div>
+                  <label class="checkbox-label"><input type="checkbox" id="invoice-received" /> Goods received</label>
+                </div>
+                <div class="action-row"><button class="secondary" type="button" id="add-invoice-item">Add Item</button><button class="primary" type="submit">Save Invoice</button><button class="secondary" type="button" id="clear-invoice">Clear</button></div>
+              </form>
+            </div>
+            <div class="panel-card summary-card"><div class="panel-head"><h3>Invoice Summary</h3></div><div id="invoice-cart" class="cart-table"></div><div class="totals-box"><div class="total-row"><span>Subtotal</span><strong id="invoice-subtotal">UGX 0</strong></div><div class="total-row"><span>Discount</span><strong id="invoice-discount-total">UGX 0</strong></div><div class="total-row"><span>Tax</span><strong id="invoice-tax-total">UGX 0</strong></div><div class="total-row grand"><span>Total</span><strong id="invoice-total">UGX 0</strong></div></div></div>
+          </div>
+          <div class="card-grid single-col"><div class="panel-card"><div class="panel-head"><div><h3>View Vendor Invoices</h3><p class="section-note" id="invoice-count"></p></div><span class="list-total" id="invoice-list-total">UGX 0</span><input class="inline-search" id="invoice-search" type="search" placeholder="Search invoice or vendor" /></div><div id="invoice-list" class="list-table"></div></div></div>
+        </section>
+
+        <div id="vendor-payment-modal" class="delivery-modal" hidden>
+          <div class="delivery-modal-card" role="dialog" aria-modal="true" aria-labelledby="vendor-payment-title">
+            <h3 id="vendor-payment-title">Record Vendor Payment</h3>
+            <form id="vendor-payment-form">
+              <div class="field"><label for="vendor-payment-amount">Payment Amount (UGX)</label><input type="number" id="vendor-payment-amount" min="0" required /></div>
+              <div class="action-row"><button class="primary" type="submit">Confirm Payment</button><button class="secondary" type="button" id="vendor-payment-cancel">Cancel</button></div>
+            </form>
+          </div>
+        </div>
+
+        <section id="customers" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Add / Edit Customer</h3>
+              </div>
+              <form id="customer-form">
+                <input type="hidden" id="customer-id" />
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="customer-name" placeholder="John Doe" required />
+                  </div>
+                  <div class="field">
+                    <label>Phone</label>
+                    <input type="text" id="customer-phone" placeholder="0701234567" />
+                  </div>
+                  <div class="field">
+                    <label>Customer Type</label>
+                    <select id="customer-type">
+                      <option value="Physical">Walk-in customer</option>
+                      <option value="Delivery">Delivery customer</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Opening Balance</label>
+                    <input type="number" id="customer-balance" min="0" value="0" />
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" type="submit">Save Customer</button>
+                  <button class="secondary" type="button" id="reset-customer-form">Reset</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card" id="inventory-editor-panel">
+              <div class="panel-head">
+                <h3>Customer Lookup</h3>
+                <span class="list-total" id="customer-total">UGX 0</span>
+              </div>
+              <div class="field">
+                <label>Search customer</label>
+                <input type="text" id="customer-search" placeholder="Search by name or phone" />
+              </div>
+              <div id="customer-list" class="list-table compact"></div>
+              <div class="divider"></div>
+              <div class="panel-head"><h3>Credit Accounts</h3><span class="list-total" id="credit-total">UGX 0</span><input class="inline-search" id="credit-search" type="search" placeholder="Search credit account" /></div>
+              <div id="credit-accounts-list" class="list-table compact"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="vendors" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Add / Edit Vendor</h3>
+              </div>
+              <form id="vendor-form">
+                <input type="hidden" id="vendor-id" />
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="vendor-name" placeholder="ABC Distributors" required />
+                  </div>
+                  <div class="field">
+                    <label>Phone</label>
+                    <input type="text" id="vendor-phone" placeholder="070xxxxxxx" />
+                  </div>
+                  <div class="field">
+                    <label>Amount Owed</label>
+                    <input type="number" id="vendor-owed" min="0" value="0" />
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" type="submit">Save Vendor</button>
+                  <button class="secondary" type="button" id="reset-vendor-form">Reset</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Vendor Directory</h3>
+                <span class="list-total" id="vendor-total">UGX 0</span>
+              </div>
+              <div class="field">
+                <label>Search vendor</label>
+                <input type="text" id="vendor-search" placeholder="Search by supplier name" />
+              </div>
+              <div id="vendor-list" class="list-table compact"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="inventory" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Add / Edit Product</h3>
+              </div>
+              <form id="product-form">
+                <input type="hidden" id="product-id" />
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="product-name" placeholder="Coke 500ml" required />
+                  </div>
+                  <div class="field">
+                    <label>Category</label>
+                    <input type="text" id="product-category" placeholder="Beverages" />
+                  </div>
+                  <div class="field">
+                    <label>SKU</label>
+                    <input type="text" id="product-sku" placeholder="COKE500" />
+                  </div>
+                  <div class="field">
+                    <label>Barcode</label>
+                    <input type="text" id="product-barcode" placeholder="Scan or enter barcode" />
+                  </div>
+                  <div class="field small">
+                    <label>Buying Price</label>
+                    <input type="number" id="product-buying-price" min="0" value="0" />
+                  </div>
+                  <div class="field small">
+                    <label>Selling Price</label>
+                    <input type="number" id="product-selling-price" min="0" value="0" />
+                  </div>
+                  <div class="field small">
+                    <label>Stock</label>
+                    <input type="number" id="product-stock" min="0" value="0" />
+                  </div>
+                  <div class="field small">
+                    <label>Low Stock Alert</label>
+                    <input type="number" id="product-low-stock" min="0" value="5" />
+                  </div>
+                  <div class="field">
+                    <label>Expiry Date</label>
+                    <input type="date" id="product-expiry-date" />
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" type="submit">Save Product</button>
+                  <button class="secondary" type="button" id="reset-product-form">Reset</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Low Stock Watch</h3>
+              </div>
+              <div id="low-stock-list" class="low-stock-list"></div>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Inventory List</h3>
+                <span class="list-total" id="inventory-total">UGX 0</span>
+                <input class="inline-search" id="product-search" type="search" placeholder="Search product, SKU, or barcode" />
+              </div>
+              <div id="product-list" class="list-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="accounts" class="module-section">
+          <div class="stats-grid three-col">
+            <div class="stat-card good">
+              <span class="label">Income Today</span>
+              <strong id="today-income">UGX 0</strong>
+            </div>
+            <div class="stat-card danger">
+              <span class="label">Expenses Today</span>
+              <strong id="today-expenses">UGX 0</strong>
+            </div>
+            <div class="stat-card accent">
+              <span class="label">Estimated Profit</span>
+              <strong id="today-profit">UGX 0</strong>
+            </div>
+            <div class="stat-card neutral">
+              <span class="label">Current Balance</span>
+              <strong id="current-balance">UGX 0</strong>
+            </div>
+          </div>
+
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Record Expense</h3>
+              </div>
+              <form id="expense-form">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Expense Name</label>
+                    <input type="text" id="expense-name" placeholder="Electricity" required />
+                  </div>
+                  <div class="field small">
+                    <label>Amount</label>
+                    <input type="number" id="expense-amount" min="0" value="0" required />
+                  </div>
+                  <div class="field small">
+                    <label>Date</label>
+                    <input type="date" id="expense-date" />
+                  </div>
+                  <div class="field">
+                    <label>Description</label>
+                    <textarea id="expense-description" rows="3" placeholder="Monthly electricity bill"></textarea>
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" type="submit">Save Expense</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Payment / Cash Flow</h3>
+              </div>
+              <form id="payment-form">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Type</label>
+                    <select id="payment-type">
+                      <option value="Income">Income</option>
+                      <option value="Expense">Expense</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Label</label>
+                    <input type="text" id="payment-label" placeholder="Shop rent / customer payment" required />
+                  </div>
+                  <div class="field small">
+                    <label>Amount</label>
+                    <input type="number" id="payment-amount" min="0" value="0" required />
+                  </div>
+                  <div class="field small">
+                    <label>Date</label>
+                    <input type="date" id="payment-date" />
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" type="submit">Save Payment</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Expense Ledger</h3>
+                <span class="list-total" id="expense-total">UGX 0</span>
+                <input class="inline-search" id="expense-search" type="search" placeholder="Search expense or payment" />
+              </div>
+              <div id="expense-history" class="list-table"></div>
+            </div>
+          </div>
+
+          <div class="card-grid single-col" id="admin-settings-panel">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Administration</h3>
+                  <p class="section-note">Manage business receipt details and registered staff accounts.</p>
+                </div>
+                <span class="muted">Admin only</span>
+              </div>
+              <form id="business-settings-form">
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Business Name</label>
+                    <input type="text" id="business-name" required />
+                  </div>
+                  <div class="field">
+                    <label>Business Contact Number</label>
+                    <input type="text" id="business-phone" placeholder="0700000000" required />
+                  </div>
+                  <div class="field">
+                    <label>Business Address</label>
+                    <input type="text" id="business-address" placeholder="Kampala, Uganda" />
+                  </div>
+                  <div class="field">
+                    <label>Business Email</label>
+                    <input type="email" id="business-email" placeholder="hello@business.com" />
+                  </div>
+                  <div class="field">
+                    <label>Business Logo</label>
+                    <input type="file" id="business-logo" accept="image/png,image/jpeg,image/webp,image/gif" />
+                    <small class="section-note">Choose a logo image from your files.</small>
+                    <img id="business-logo-preview" class="business-logo-preview" alt="Business logo preview" hidden />
+                  </div>
+                  <div class="field small">
+                    <label>Country</label>
+                    <input type="text" id="business-country" placeholder="Uganda" />
+                  </div>
+                  <div class="field small">
+                    <label>Currency</label>
+                    <input type="text" id="business-currency" placeholder="UGX" maxlength="6" required />
+                  </div>
+                  <div class="field small">
+                    <label>Tax / VAT Rate (%)</label>
+                    <input type="number" id="business-tax-rate" min="0" max="100" value="0" required />
+                  </div>
+                  <div class="field small">
+                    <label>Opening Balance (UGX)</label>
+                    <input type="number" id="business-opening-balance" min="0" value="0" required />
+                  </div>
+                  <div class="field small">
+                    <label>Financial Year Starts</label>
+                    <input type="date" id="business-financial-year" required />
+                  </div>
+                  <div class="field">
+                    <label>Business Locations</label>
+                    <select id="business-multi-branch">
+                      <option value="false">No, I have one business location</option>
+                      <option value="true">Yes, I have multiple branches</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" type="submit">Save Business Details</button>
+                </div>
+              </form>
+              <div class="divider"></div>
+              <div class="panel-head">
+                <div>
+                  <h3>Mobile Money Accounts</h3>
+                  <p class="section-note">Business receiving accounts only. These numbers are never treated as customer phone numbers.</p>
+                </div>
+              </div>
+              <form id="mobile-money-account-form">
+                <input type="hidden" id="mobile-money-account-id" />
+                <div class="form-grid">
+                  <div class="field"><label for="mobile-money-account-network">Network</label><select id="mobile-money-account-network"><option value="MTN">MTN Mobile Money</option><option value="Airtel">Airtel Money</option></select></div>
+                  <div class="field"><label for="mobile-money-account-name">Account / Recipient Name</label><input type="text" id="mobile-money-account-name" required /></div>
+                  <div class="field"><label for="mobile-money-account-phone">Mobile Money Phone Number</label><input type="tel" id="mobile-money-account-phone" placeholder="0772 123 456" required /></div>
+                  <div class="field"><label for="mobile-money-account-description">Description</label><input type="text" id="mobile-money-account-description" placeholder="Main shop account" /></div>
+                  <div class="field"><label for="mobile-money-account-status">Status</label><select id="mobile-money-account-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+                  <div class="field multi-branch-only" hidden><label for="mobile-money-account-branch">Branch</label><select id="mobile-money-account-branch"><option value="">Business-wide</option></select></div>
+                </div>
+                <div class="action-row"><button class="primary" type="submit">Save Mobile Money Account</button><button class="secondary" type="button" id="reset-mobile-money-account">Clear</button></div>
+              </form>
+              <div id="mobile-money-account-list" class="list-table compact"></div>
+                <div class="divider"></div>
+                <div class="panel-head"><h3>Staff Accounts</h3><input class="inline-search" id="staff-search" type="search" placeholder="Search staff or role" /></div>
+              <div class="panel-head">
+                <div>
+                  <h3>Transaction Reports</h3>
+                  <p class="section-note">Filter any recorded transaction and print the result.</p>
+                </div>
+                <span class="muted" id="report-summary">0 transactions</span>
+              </div>
+              <div class="form-grid report-filters">
+                <div class="field">
+                  <label for="report-type">Transaction Type</label>
+                  <select id="report-type">
+                    <option value="">All transactions</option>
+                    <option value="Sale">Sales</option>
+                    <option value="Purchase">Purchases</option>
+                    <option value="Expense">Expenses</option>
+                    <option value="Income">Income payments</option>
+                    <option value="Quotation">Quotations</option>
+                    <option value="Vendor Invoice">Vendor invoices</option>
+                  </select>
+                </div>
+                <div class="field small">
+                  <label for="report-from">From</label>
+                  <input type="date" id="report-from" />
+                </div>
+                <div class="field small">
+                  <label for="report-to">To</label>
+                  <input type="date" id="report-to" />
+                </div>
+              </div>
+              <div class="action-row">
+                <button class="primary" id="print-report" type="button">Print Filtered Report</button>
+              </div>
+              <div id="report-results" class="list-table report-results"></div>
+              <div class="divider"></div>
+              <form id="staff-account-form">
+                <input type="hidden" id="staff-id" />
+                <div class="form-grid">
+                  <div class="field">
+                    <label>Full Name</label>
+                    <input type="text" id="staff-name" placeholder="Cashier name" required />
+                  </div>
+                  <div class="field">
+                    <label>Username</label>
+                    <input type="text" id="staff-username" placeholder="cashier1" required />
+                  </div>
+                  <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="staff-password" placeholder="Temporary password" />
+                  </div>
+                  <div class="field">
+                    <label>Department / Role</label>
+                    <select id="staff-role">
+                      <option value="owner">Business Owner</option>
+                      <option value="manager">Branch Manager</option>
+                      <option value="sales">Sales / Delivery Cashier</option>
+                      <option value="purchase">Purchase & Inventory</option>
+                      <option value="delivery">Delivery Person</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Phone Number</label>
+                    <input type="tel" id="staff-phone" placeholder="0700000000" />
+                  </div>
+                  <div class="field"><label>Email Address</label><input type="email" id="staff-email" placeholder="name@example.com" /></div>
+                  <div class="field">
+                    <label>Address</label>
+                    <input type="text" id="staff-address" placeholder="Kampala, Uganda" />
+                  </div>
+                  <div class="field multi-branch-only" hidden id="staff-branch-field">
+                    <label>Assigned Branch</label>
+                    <select id="staff-branch"></select>
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="primary" id="staff-submit-button" type="submit">Register Staff Account</button>
+                  <button class="secondary" id="reset-staff-form" type="button">Clear</button>
+                </div>
+              </form>
+              <div class="divider"></div>
+              <div id="staff-account-list" class="list-table compact"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="branches" class="module-section multi-branch-only" hidden>
+          <div class="card-grid two-col">
+            <div class="panel-card">
+              <div class="panel-head"><h3>Branch Management</h3><span class="muted">Frontend structure</span></div>
+              <form id="branch-form">
+                <input type="hidden" id="branch-id" />
+                <div class="form-grid">
+                  <div class="field"><label for="branch-name">Branch Name</label><input type="text" id="branch-name" required /></div>
+                  <div class="field"><label for="branch-phone">Phone</label><input type="text" id="branch-phone" /></div>
+                  <div class="field"><label for="branch-address">Address</label><input type="text" id="branch-address" required /></div>
+                  <div class="field"><label for="branch-manager">Branch Manager</label><select id="branch-manager"></select></div>
+                  <label class="checkbox-label"><input type="checkbox" id="branch-active" checked /> Active branch</label>
+                </div>
+                <div class="action-row"><button class="primary" type="submit">Save Branch</button><button class="secondary" type="button" id="reset-branch">Clear</button></div>
+              </form>
+            </div>
+            <div class="panel-card"><div class="panel-head"><h3>Stock Transfers</h3><span class="muted">Future workflow</span></div><form id="stock-transfer-form"><div class="form-grid"><div class="field"><label for="transfer-from">From</label><select id="transfer-from"></select></div><div class="field"><label for="transfer-to">To</label><select id="transfer-to"></select></div><div class="field"><label for="transfer-product">Product</label><select id="transfer-product"></select></div><div class="field small"><label for="transfer-qty">Quantity</label><input type="number" id="transfer-qty" min="1" value="1" /></div></div><div class="action-row"><button class="secondary" type="submit">Prepare Transfer</button></div></form><div id="stock-transfer-list" class="list-table compact"></div></div>
+          </div>
+          <div class="card-grid single-col"><div class="panel-card"><div class="panel-head"><h3>Branches</h3><input class="inline-search" id="branch-search" type="search" placeholder="Search branch or manager" /><span class="section-note">Branch-specific inventory, sales, purchases, quotations, invoices, payments, and reports can use this context.</span></div><div id="branch-list" class="list-table"></div></div></div>
+        </section>
+
+        <section id="delivery" class="module-section">
+          <div class="card-grid two-col">
+            <div class="panel-card" id="delivery-create-panel">
+              <div class="panel-head">
+                <div>
+                  <h3>Delivery Operations</h3>
+                  <p class="section-note">Deliveries are created automatically from completed sales.</p>
+                </div>
+              </div>
+              <div class="delivery-summary" id="delivery-summary"></div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3>Delivery Filters</h3>
+              </div>
+              <div class="form-grid delivery-filters">
+                <div class="field"><label for="delivery-filter-date">Date</label><input type="date" id="delivery-filter-date" /></div>
+                <div class="field"><label for="delivery-filter-status">Status</label><select id="delivery-filter-status"><option value="">All statuses</option></select></div>
+                <div class="field"><label for="delivery-filter-driver">Delivery Person</label><select id="delivery-filter-driver"><option value="">All delivery people</option></select></div>
+                <div class="field"><label for="delivery-filter-customer">Customer</label><input type="search" id="delivery-filter-customer" placeholder="Name or phone" /></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head"><h3>Delivery Board</h3><span class="list-total" id="delivery-total">UGX 0</span><span class="muted" id="delivery-board-count"></span></div>
+              <div id="delivery-list" class="list-table delivery-table"></div>
+            </div>
+          </div>
+        </section>
+
+        <div id="delivery-modal" class="delivery-modal" hidden>
+          <div class="delivery-modal-card" role="dialog" aria-modal="true" aria-labelledby="delivery-modal-title">
+            <h3 id="delivery-modal-title">Delivery action</h3>
+            <form id="delivery-modal-form">
+              <div id="delivery-modal-fields"></div>
+              <div class="action-row">
+                <button class="primary" type="submit" id="delivery-modal-submit">Confirm</button>
+                <button class="secondary" type="button" id="delivery-modal-cancel">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="return-sale-modal" class="delivery-modal" hidden>
+          <div class="delivery-modal-card return-sale-modal-card" role="dialog" aria-modal="true" aria-labelledby="return-sale-title">
+            <h3 id="return-sale-title">Return this sale?</h3>
+            <p id="return-sale-message">The sale will be returned and inventory will be adjusted.</p>
+            <div class="action-row">
+              <button class="primary" id="confirm-return-sale" type="button">Yes, Return Sale</button>
+              <button class="secondary" id="cancel-return-sale" type="button">No, Keep Sale</button>
+            </div>
+          </div>
+        </div>
+
+        <section id="history" class="module-section">
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <div>
+                  <h3>Transaction Calendar</h3>
+                  <p class="section-note">Choose a year, month, and day to review all activity.</p>
+                </div>
+                <button class="secondary" id="history-today" type="button">Today</button>
+              </div>
+              <div class="history-controls">
+                <div class="field">
+                  <label for="history-year">Year</label>
+                  <select id="history-year"></select>
+                </div>
+                <div class="field">
+                  <label for="history-month">Month</label>
+                  <select id="history-month">
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                  </select>
+                </div>
+              </div>
+              <div id="history-calendar" class="history-calendar"></div>
+            </div>
+          </div>
+
+          <div class="card-grid single-col">
+            <div class="panel-card">
+              <div class="panel-head">
+                <h3 id="history-selected-title">Selected Date</h3>
+                <span class="muted" id="history-selected-total">UGX 0</span>
+              </div>
+              <div id="history-selected-list" class="list-table"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
